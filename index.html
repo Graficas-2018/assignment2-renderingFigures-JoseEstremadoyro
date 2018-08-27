@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="webGL-library.js">
+    </script>
+    <script id="fragmentShader" type="WebGL/FragmentShader">
+    /*
+    *   Simple pixel/fragment shader
+    *   Colors 
+    *   Learning comments version
+    */
+    varying vec3 vColor;
+    void main(){
+
+        // the FragColor or PixelColor will be drawn white
+        gl_FragColor = vec4(vColor,1);   
+    }
+    </script>
+    <script  id="vertexShader" type="WebGL/VertexShader">
+    /*
+    *   Simple 3D vertex shader
+    *   Passes the vertex position as provided 
+    *   No GPU transformations
+    *   Learning comments version
+    */
+
+    // Position consisting of two numbers (x,y)
+    attribute vec3 position;
+    varying vec3 vColor;
+
+    void main(){
+        
+        /*  gl_Position is a vec4, x,y,z,w. w is used for weighting in graphics.
+        *   We fill in the remaining spaces of the vec4 */
+        vColor = gl_Color;
+        gl_Position = vec4(position,1);
+    }
+    </script>
+    <script src="program.js">
+    </script>
+</head>
+<body>
+    <canvas id="webGLCanvas" width="800" height="800">
+        Browser does not support Canvas
+    </canvas> 
+</body>
+</html>
