@@ -9,12 +9,13 @@
     *   Colors 
     *   Learning comments version
     */
-    uniform vec3 vColor;
+    precision lowp float;
+    uniform vec3 color;
 
     void main(){
 
         // The FragColor or PixelColor will be drawn white
-        gl_FragColor = vec4(vColor,1);   
+        gl_FragColor = vec4(color,1);   
     }
     </script>
     <script  id="vertexShader" type="WebGL/VertexShader">
@@ -34,7 +35,7 @@
         /*  gl_Position is a vec4, x,y,z,w. w is used for 
         *   weighting in graphics.
         *   We fill in the remaining spaces of the vec4 */
-        gl_Position = model*vec4(position,1);
+        gl_Position = model * vec4(position,1);
     }
     </script>
     <script src="program.js">

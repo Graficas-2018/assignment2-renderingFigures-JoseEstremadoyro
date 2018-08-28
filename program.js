@@ -1,5 +1,5 @@
 
-
+// Everything is run when the DOM's content has loaded
 document.addEventListener("DOMContentLoaded",function(event){
 
     /* shaders and buffers */
@@ -16,7 +16,8 @@ document.addEventListener("DOMContentLoaded",function(event){
     /* Uniforms */
     var modelUniform = {
         id:"model",
-        value:[
+        size:4,
+        value:new Float32Array([
             0.04621901591600671, 
             0, 
             0.49785921962715113, 
@@ -33,12 +34,13 @@ document.addEventListener("DOMContentLoaded",function(event){
             -0.1, 
             0, 
             1
-        ]    
+        ])    
     }
 
     var colorUniform={
         id:"color",
-        value:[1,0,0]     
+        size:1,
+        value:new Float32Array([1,0,0])
     }
 
     /* Attributes */
@@ -48,10 +50,40 @@ document.addEventListener("DOMContentLoaded",function(event){
         type:WebGLJs.gl.FLOAT
     }; 
 
+    // Registering of all webgl elements
     WebGLJs.registerShaders([vertexShader,pixelShader]);
-    WebGLJs.registerAttributes([positionAttribute]);
     WebGLJs.registerUniforms([modelUniform,colorUniform]);
+    WebGLJs.registerAttributes([positionAttribute]);
+
     //cube
+    var cube = [
+        /* first face */
+        [0,0,0],
+        [0,0,1],
+        [0,1,0],
+        [0,1,1],
+
+        /* second face */
+        [1,0,0],
+        [1,1,0],
+        [1,0,1],
+        [1,1,1],
+    ];
+    cube = [].concat.apply([],cube);
+    cube = cube.map((x)=>x*0.5);
+
+    WebGLJs.draw([{
+        bufferId:"position",
+        typedArray:new Float32Array(cube)
+    }],4);
+    
+    // Change Color
+    colorUniform.value = [0,1,0];
+    WebGLJs.setUniforms([colorUniform]);
+    /*WebGLJs.draw([{
+        bufferId:"position",
+        typedArray:new Float32Array([1,1,1,0,0,0,-1,-1,-1])
+    }],3);*/
     //scutoid
     
 });

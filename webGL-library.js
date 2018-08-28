@@ -35,8 +35,8 @@ WebGLJs = {
 
     /* We separate this function so we can alter it easily, 
     *  Default color is black */
-    drawBackground:function(bg={r:0,g:0,b:0,a:0}){
-        gl.clearColor(bg.r,bg.g,bg.b,bg.a);
+    setBackground:function(bg={r:0,g:0,b:0,a:0}){
+        this.gl.clearColor(bg.r,bg.g,bg.b,bg.a);
     },
 
     /* We register each shader by the id of the script 
@@ -94,7 +94,16 @@ WebGLJs = {
         // We get the location from the id and set the value 
         for( let obj of array ) {
             let uniform = this.gl.getUniformLocation(this.program,obj.id); 
-            this.gl.uniformMatrix4fv(uniform,false,obj.value);
+            
+            // Requires modification, to adjust for every case: to do
+            switch(obj.size){
+                case 4: 
+                    this.gl.uniformMatrix4fv(uniform,false,obj.value);
+                    break;
+                case 1:
+                    this.gl.uniform3fv(uniform,obj.value);
+                    break;
+            }
         }
     },
 
@@ -116,6 +125,9 @@ WebGLJs = {
 
     }
 }
+
+/* Set Alias */
+WebGLJs.setUniforms = WebGLJs.registerUniforms;
 
 // We wait for the content to be loaded before we initialize everything 
 document.addEventListener("DOMContentLoaded",function(event){
