@@ -6,12 +6,13 @@
  * Learning Comments Edition
  */
 
-// WebGl Object to wrap the library, works as a namespace 
+// WebGL Object to wrap the library, works as a namespace 
 WebGLJs = {
     canvas:null,
     gl:null,
     shaders:{},
     buffers:{},
+    uniforms:{},
     program:null,
 
     // Initializer, used to fill in the variables and initialize webGl
@@ -42,6 +43,7 @@ WebGLJs = {
      * As of the moment the script must have its source as text
      * This will be changed for something more flexible */
     registerShaders:function(array){
+
         for(let obj of array){
 
             // Compile and save shader 
@@ -64,7 +66,7 @@ WebGLJs = {
 
     /* We register, initialize, compile all buffers to be used, 
      * equivalent to each property of the compiler */
-    registerBuffers:function(array){
+    registerAttributes:function(array){
 
         for(let obj of array){
 
@@ -86,19 +88,30 @@ WebGLJs = {
         }
     },
 
+    // We register Uniforms and set their values
+    registerUniforms:function(array){
+
+        // We get the location from the id and set the value 
+        for( let obj of array ) {
+            let uniform = this.gl.getUniformLocation(this.program,obj.id); 
+            this.gl.uniformMatrix4fv(uniform,false,obj.value);
+        }
+    },
+
     // We receive the buffer to send, as well as the array
-    draw:function(bufferId,typedArray,num,drawType=this.gl.TRIANGLE_STRIP){
+    draw:function(data,num,drawType=this.gl.TRIANGLE_STRIP){
 
         /* Requires the buffer system, which is registered 
          * apart, which are created, 
          * binded and then the data is buffered through */ 
+        for(let obj of data){
+            let buffer = this.buffers[obj.bufferId];
+            this.gl.bindBuffer(this.gl.ARRAY_BUFFER,buffer);
+            this.gl.bufferData(this.gl.ARRAY_BUFFER,obj.typedArray,
+                    this.gl.STATIC_DRAW);
+        }
 
-        let buffer = this.buffers[bufferId];
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER,buffer);
-        this.gl.bufferData(this.gl.ARRAY_BUFFER,typedArray,
-                this.gl.STATIC_DRAW);
-
-        // After putting the data into the buffer we draw
+        // After putting the data into the buffers we draw
         this.gl.drawArrays(drawType,0,num);
 
     }

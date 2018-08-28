@@ -9,10 +9,11 @@
     *   Colors 
     *   Learning comments version
     */
-    varying vec3 vColor;
+    uniform vec3 vColor;
+
     void main(){
 
-        // the FragColor or PixelColor will be drawn white
+        // The FragColor or PixelColor will be drawn white
         gl_FragColor = vec4(vColor,1);   
     }
     </script>
@@ -24,16 +25,16 @@
     *   Learning comments version
     */
 
-    // Position consisting of two numbers (x,y)
+    // Position consisting of three numbers (x,y,z)
     attribute vec3 position;
-    varying vec3 vColor;
+    uniform mat4 model;
 
     void main(){
         
-        /*  gl_Position is a vec4, x,y,z,w. w is used for weighting in graphics.
+        /*  gl_Position is a vec4, x,y,z,w. w is used for 
+        *   weighting in graphics.
         *   We fill in the remaining spaces of the vec4 */
-        vColor = gl_Color;
-        gl_Position = vec4(position,1);
+        gl_Position = model*vec4(position,1);
     }
     </script>
     <script src="program.js">
