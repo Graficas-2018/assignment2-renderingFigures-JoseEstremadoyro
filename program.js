@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded",function(event){
     var colorUniform={
         id:"color",
         size:1,
-        value:new Float32Array([1,0,0])
     }
 
     /* Attributes */
@@ -50,41 +49,63 @@ document.addEventListener("DOMContentLoaded",function(event){
         type:WebGLJs.gl.FLOAT
     }; 
 
-    // Registering of all webgl elements
+    /* Registering of all webgl elements 
+     * Note: The color Uniform will be changed after each face, 
+     * so we register it later */
     WebGLJs.registerShaders([vertexShader,pixelShader]);
-    WebGLJs.registerUniforms([modelUniform,colorUniform]);
+    WebGLJs.registerUniforms([modelUniform]);
     WebGLJs.registerAttributes([positionAttribute]);
 
-    //cube
-    var cube = [
-        /* first face */
-        [0,0,0],
-        [0,0,1],
-        [0,1,0],
-        [0,1,1],
-
-        /* second face */
-        [1,0,0],
-        [1,1,0],
-        [1,0,1],
-        [1,1,1],
+    /* Cube is made of vertexes and indices to generate faces */
+    var cubeVertexes = [
+        [-1,-1,-1],
+        [-1,-1, 1],
+        [-1, 1,-1],
+        [ 1,-1,-1],
+        [ 1, 1,-1],
+        [-1, 1, 1],
+        [ 1,-1, 1],
+        [ 1, 1, 1],
     ];
-    cube = [].concat.apply([],cube);
-    cube = cube.map((x)=>x*0.5);
 
-    WebGLJs.draw([{
-        bufferId:"position",
-        typedArray:new Float32Array(cube)
-    }],4);
+    /* Scale Down */
+    cubeVertexes = cubeVertexes.map((x)=>x.map((y)=>y*.5));
+
+    /* Translate (+.5,0,0) */
+    cubeVertexes = cubeVertexes.map((x)=>[x[0],x[1]+.5,x[2]]);
+
+    /* Each Line represents a face */
+    var cubeIndices = [
+        0,1,3,6,
+        0,2,3,4,
+        0,1,2,5
+    ];
+
+    /* We fill in the cube,using the appropiate vertexes */
+    cube = cubeIndices.map((x)=>cubeVertexes[x]);
+
+    /* Flatten array */
+    cube = [].concat.apply([],cube);
+
+
+    colors = [[1,0,0],[0,1,0],[0,0,1]];
     
-    // Change Color
-    colorUniform.value = [0,1,0];
-    WebGLJs.setUniforms([colorUniform]);
-    /*WebGLJs.draw([{
-        bufferId:"position",
-        typedArray:new Float32Array([1,1,1,0,0,0,-1,-1,-1])
-    }],3);*/
+    console.log(cube);
+
+    for(let color of colors){
+
+        /* Change Color */
+        colorUniform.value = new Float32Array(color);
+        WebGLJs.setUniforms([colorUniform]);
+
+        /* Draw Face */
+        WebGLJs.draw([{
+            bufferId:"position",
+            typedArray:new Float32Array(cube.splice(0,12))
+        }],4);
+        console.log(cube);
+    }
+
     //scutoid
-    
 });
 
