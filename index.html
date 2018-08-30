@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- 
+        GL Matrix, for matrix operations and linear Algebra in the js
+        though most linear algebra, should be done on the shaders, 
+        uniforms such as the projection and model views are only done once
+        in the program therefore, we will put them in the initialization js
+    -->
+    <script 
+src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.7.1/gl-matrix-min.js">
+    </script>
     <script src="webGL-library.js">
     </script>
     <script id="fragmentShader" type="WebGL/FragmentShader">

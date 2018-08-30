@@ -13,28 +13,35 @@ document.addEventListener("DOMContentLoaded",function(event){
         type:WebGLJs.gl.FRAGMENT_SHADER
     };
 
+    /* The model uniform,created from this model array,
+     * is used by our vertex Shader to move the camera 
+     * and allow the objects to be seen from an isometric 
+     * perspective. We start with an identity matrix. 
+     * We move it to the top corner and tilt it towards the center */
+
+    
+    // Translate (0,0,-.5) camera out, .2z, from the origin
+    var translate= vec3.fromValues(-.5,0,.2);    
+
+    /* Rotate -45 degrees over x and y, and 90 over z
+     * We use quaternions, instead of vectors, as they make 
+     * accomulating rotations easier, due to their different mathematical
+     * properties */
+    var rotate = quat.create()
+    quat.rotateZ(rotate,rotate,-Math.PI/2);
+    quat.rotateY(rotate,rotate,-Math.PI/4);
+    quat.rotateX(rotate,rotate,-Math.PI/4);
+
+    var model = mat4.create();
+    mat4.fromRotationTranslation(model,rotate,translate);
+
+    /* We end transforming the model matrix */
+
     /* Uniforms */
     var modelUniform = {
         id:"model",
         size:4,
-        value:new Float32Array([
-            0.04621901591600671, 
-            0, 
-            0.49785921962715113, 
-            0, 
-            -0.4970914856058723, 
-            -0.0277568146622999, 
-            0.04614774293450941, 
-            0, 
-            0.02763797217421619, 
-            -0.4992289647444374, 
-            -0.002565785317308975, 
-            0, 
-            0, 
-            -0.1, 
-            0, 
-            1
-        ])    
+        value:model
     }
 
     var colorUniform={
@@ -69,14 +76,14 @@ document.addEventListener("DOMContentLoaded",function(event){
     ];
 
     /* Scale Down */
-    cubeVertexes = cubeVertexes.map((x)=>x.map((y)=>y*.5));
+    cubeVertexes = cubeVertexes.map((x)=>x.map((y)=>y*.25));
 
     /* Translate (+.5,0,0) */
     cubeVertexes = cubeVertexes.map((x)=>[x[0],x[1]+.5,x[2]]);
 
     /* Each Line represents a face */
     var cubeIndices = [
-        0,1,3,6,
+        2,4,5,7,
         0,2,3,4,
         0,1,2,5
     ];
@@ -89,8 +96,6 @@ document.addEventListener("DOMContentLoaded",function(event){
 
 
     colors = [[1,0,0],[0,1,0],[0,0,1]];
-    
-    console.log(cube);
 
     for(let color of colors){
 
@@ -103,7 +108,6 @@ document.addEventListener("DOMContentLoaded",function(event){
             bufferId:"position",
             typedArray:new Float32Array(cube.splice(0,12))
         }],4);
-        console.log(cube);
     }
 
     //scutoid
