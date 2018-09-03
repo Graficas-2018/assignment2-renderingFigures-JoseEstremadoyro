@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded",function(event){
 
     
     // Translate (0,0,-.5) camera out, .2z, from the origin
-    var translate= vec3.fromValues(-.5,0,.2);    
+    var translate= vec3.fromValues(-1,0,.2);    
 
     /* Rotate -45 degrees over x and y, and 90 over z
      * We use quaternions, instead of vectors, as they make 
@@ -34,16 +34,26 @@ document.addEventListener("DOMContentLoaded",function(event){
 
     var model = mat4.create();
     mat4.fromRotationTranslation(model,rotate,translate);
+    var pwidth = WebGLJs.canvas.width;
+    var pheight = WebGLJs.canvas.height;
+    var perspective = mat4.create();
+    mat4.perspective(
+            perspective,
+            Math.PI/2,
+            Math.max(pwidth,pheight),
+            1,
+            2);
+    // Multiply the model times the perspective
+    // mat4.multiply(model,model,perspective);
 
     /* We end transforming the model matrix */
 
     /* Uniforms */
-    var modelUniform = {
+    var modelPerspectiveUniform = {
         id:"model",
         size:4,
         value:model
     }
-
     var colorUniform={
         id:"color",
         size:1,
@@ -60,7 +70,7 @@ document.addEventListener("DOMContentLoaded",function(event){
      * Note: The color Uniform will be changed after each face, 
      * so we register it later */
     WebGLJs.registerShaders([vertexShader,pixelShader]);
-    WebGLJs.registerUniforms([modelUniform]);
+    WebGLJs.registerUniforms([modelPerspectiveUniform]);
     WebGLJs.registerAttributes([positionAttribute]);
 
     /* Cube is made of vertexes and indices to generate faces */
@@ -78,8 +88,8 @@ document.addEventListener("DOMContentLoaded",function(event){
     /* Scale Down */
     cubeVertexes = cubeVertexes.map((x)=>x.map((y)=>y*.25));
 
-    /* Translate (+.5,0,0) */
-    cubeVertexes = cubeVertexes.map((x)=>[x[0],x[1]+.5,x[2]]);
+    /* Translate (0,.75,0) */
+    cubeVertexes = cubeVertexes.map((x)=>[x[0],x[1]+.75,x[2]]);
 
     /* Each Line represents a face */
     var cubeIndices = [
@@ -111,5 +121,61 @@ document.addEventListener("DOMContentLoaded",function(event){
     }
 
     //scutoid
+    var scutoidVertexes =[
+        // pentagon
+        [0,0,1],
+        [.95,0,.309],
+        [.5877,0,-.809],
+        [-.5877,0,-.809],
+        [-.95,0,.309],
+
+        // hexagon
+        [0,0,1],
+        [.866,1,.5],
+        [.866,1,-.5],
+        [0,0,-1],
+        [-.866,1,-.5],
+        [-.866,1,.5],
+
+        // body
+        [.95,.5,.309],
+    ];
+    /* Scale Down */
+    scutoidVertexes = scutoidVertexes.map((x)=>x.map((y)=>y*.5));
+
+    /* Translate (0,-.75,0) */
+    scutoidVertexes = scutoidVertexes.map((x)=>[x[0]-.75,x[1]+.75,x[2]+.75]);
+    var scutoidIndices = [
+        // special faces
+        2,3,11,
+        2,11,7,6,1,
+        2,11,8,9,3,
+
+        // other faces
+
+    ];
+
+    /* We fill in the scutoid,using the appropiate vertexes */
+    scutoid = scutoidIndices.map((x)=>scutoidVertexes[x]);
+
+    /* Flatten array */
+    scutoid = [].concat.apply([],scutoid);
+
+
+    colors = [[1,0,0],[0,1,0],[0,0,1]];
+
+    for(let color of colors){
+
+        /* Change Color */
+        colorUniform.value = new Float32Array(color);
+        WebGLJs.setUniforms([colorUniform]);
+
+        /* Draw Face */
+        WebGLJs.draw([{
+            bufferId:"position",
+            typedArray:new Float32Array(scutoid.splice(0,12))
+        }],4);
+    }
+
 });
 
