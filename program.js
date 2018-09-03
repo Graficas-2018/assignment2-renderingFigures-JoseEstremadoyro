@@ -130,15 +130,15 @@ document.addEventListener("DOMContentLoaded",function(event){
         [-.95,0,.309],
 
         // hexagon
-        [0,0,1],
+        [0,1,1],
         [.866,1,.5],
         [.866,1,-.5],
-        [0,0,-1],
+        [0,1,-1],
         [-.866,1,-.5],
         [-.866,1,.5],
 
         // body
-        [.95,.5,.309],
+        [.5877,.5,-.809],
     ];
     /* Scale Down */
     scutoidVertexes = scutoidVertexes.map((x)=>x.map((y)=>y*.5));
@@ -146,12 +146,22 @@ document.addEventListener("DOMContentLoaded",function(event){
     /* Translate (0,-.75,0) */
     scutoidVertexes = scutoidVertexes.map((x)=>[x[0]-.75,x[1]+.75,x[2]+.75]);
     var scutoidIndices = [
+
+        //pentagon
+        1,0,2,4,3,
+
+        //hexagon
+        6,5,7,10,8,9,
+
         // special faces
         2,3,11,
         2,11,7,6,1,
         2,11,8,9,3,
 
-        // other faces
+        // side faces
+        3,4,9,10,
+        4,0,10,5,
+        0,1,5,6
 
     ];
 
@@ -160,21 +170,37 @@ document.addEventListener("DOMContentLoaded",function(event){
 
     /* Flatten array */
     scutoid = [].concat.apply([],scutoid);
+    console.log(scutoid.length);
 
+    function faceObj(color,vertexes){
+        this.color = color;
+        this.vertexes = vertexes;
+    }
+    faces = [
+        new faceObj([.5,0,0],5),
+        new faceObj([0,.5,0],6),
 
-    colors = [[1,0,0],[0,1,0],[0,0,1]];
+        new faceObj([1,0,0],3),
+        new faceObj([0,1,0],5),
+        /*new faceObj([0,0,1],5),
 
-    for(let color of colors){
+        new faceObj([1,0,1],4),
+        new faceObj([1,1,0],4),
+        new faceObj([0,1,1],4) */
+    ];
+
+    for(let face of faces){
 
         /* Change Color */
-        colorUniform.value = new Float32Array(color);
+        colorUniform.value = new Float32Array(face.color);
         WebGLJs.setUniforms([colorUniform]);
 
         /* Draw Face */
         WebGLJs.draw([{
             bufferId:"position",
-            typedArray:new Float32Array(scutoid.splice(0,12))
-        }],4);
+            typedArray:new Float32Array(scutoid.splice(0,face.vertexes*3))
+        }],face.vertexes);
+        console.log(scutoid.length);
     }
 
 });
