@@ -7,7 +7,7 @@
  */
 
 // WebGL Object to wrap the library, works as a namespace 
-WebGLJs = {
+    WebGLJs = {
     canvas:null,
     gl:null,
     shaders:{},

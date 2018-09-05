@@ -38,11 +38,12 @@ document.addEventListener("DOMContentLoaded",function(event){
     var pheight = WebGLJs.canvas.height;
     var perspective = mat4.create();
     mat4.perspective(
-            perspective,
-            Math.PI/2,
-            Math.max(pwidth,pheight),
-            1,
-            2);
+        perspective,
+        Math.PI/2,
+        Math.max(pwidth,pheight),
+        1,
+        2
+    );
     // Multiply the model times the perspective
     // mat4.multiply(model,model,perspective);
 
@@ -140,6 +141,7 @@ document.addEventListener("DOMContentLoaded",function(event){
         // body
         [.5877,.5,-.809],
     ];
+
     /* Scale Down */
     scutoidVertexes = scutoidVertexes.map((x)=>x.map((y)=>y*.5));
 
@@ -154,9 +156,8 @@ document.addEventListener("DOMContentLoaded",function(event){
         6,5,7,10,8,9,
 
         // special faces
-        2,3,11,
-        2,11,7,6,1,
-        2,11,8,9,3,
+        7,8,11,
+        11,8,2,3,9,8,
 
         // side faces
         3,4,9,10,
@@ -181,11 +182,11 @@ document.addEventListener("DOMContentLoaded",function(event){
         new faceObj([0,.5,0],6),
 
         new faceObj([1,0,0],3),
-        new faceObj([0,1,0],5),
-        /*new faceObj([0,0,1],5),
+        new faceObj([0,1,0],6),
+        /*new faceObj([0,0,1],5),*/
 
         new faceObj([1,0,1],4),
-        new faceObj([1,1,0],4),
+        /*new faceObj([1,1,0],4),
         new faceObj([0,1,1],4) */
     ];
 
